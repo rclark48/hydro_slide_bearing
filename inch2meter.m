@@ -1,17 +1,24 @@
-function [m] = inch2meter(in)
-%% Title Block (update when revised)
-%            Written by: Reed Clark
-%          Date Created: 12-18-2018
-%            Revised By: Reed Clark
-%  Revision Description: title block updates: removed lines
-%  about revision date and revision number--git tracks this,
-%  so no need to manually update
+function [out] = inch2meter(in)
+%% Tittle Block:
+
+% Written by: Reed Clark
+% Date Created: 12-29-2018
+% Revised By: Reed Clark
+% Revision Description: "save-as" to get formatting up to snuff with
+% template
+
 %% Description:
-% Convert units from inches to meters.
+% Converts inches to meters
 
 %% Inputs:
 % in: can be a scalar, vector, or matrix
 
+%% Outputs: 
+% out: can be a scalar, vector, or matrix, dependent on the input
+
+%% Constants:
+conv = 25.4e-3; % [in --> m] conversion factor
+
 %% Code:
-m = in*25.4e-3;
+out = in*conv;
 end
