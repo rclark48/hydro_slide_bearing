@@ -1,18 +1,18 @@
-function [a0, v0] = initialConditions()
+function [a0, v0] = initialConditions(const)
 %% Tittle Block:
 
 % Written by: Reed Clark
 % Date Created: 12-30-2018
 % Revised By: Reed Clark
-% Revision Description: typo in outputs block
+% Revision Description: added const input and redefined the constants
 
 %% Description:
 % Computes the initial velocity of the bearing from when it's dropped
 % to when it hits the ramp
 
 %% Inputs:
-% There are no inputs to this function--it is defined in terms of
-% constants, defined further down in the constants block
+% const: structure, list of shared constants, controlled by the
+% constants function
 
 %% Outputs: 
 % a0: scalar, [m/s^2], initial acceleration of the bearing in the -x_r
@@ -24,9 +24,9 @@ function [a0, v0] = initialConditions()
 % coordinate system)
 
 %% Constants:
-g = 9.81; % [m/s^2], gravitational acceleration
-theta = 2.6; % [degrees], ramp inclination wrt to inertial frame
-z0 = 2e-3; % [m], initial drop height
+g = const.g;
+theta = const.theta;
+z0 = const.z0;
 
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
