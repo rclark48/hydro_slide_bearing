@@ -1,10 +1,10 @@
-function [x_cm,z_cm,m] = COM(alpha, beta, density)
+function [x_cm,z_cm,m] = COM(alpha, beta, const)
 %% Tittle Block:
 
 % Written by: Reed Clark
 % Date Created: 12-30-2018
 % Revised By: Reed Clark
-% Revision Description: changes to output description section
+% Revision Description: added const input and redefined the constants
 
 %% Description:
 % Computes the bearing center of mass coordinates 
@@ -14,8 +14,8 @@ function [x_cm,z_cm,m] = COM(alpha, beta, density)
 
 % beta: scalar, [in]
 
-% density: scalar, [kg/m^3], assume constant desity throughout
-% material
+% const: structure, list of shared constants, controlled by the
+% constants function
 
 alpha = inch2meter(alpha); % [in --> m]
 beta = inch2meter(beta); % [in --> m]
@@ -28,13 +28,10 @@ beta = inch2meter(beta); % [in --> m]
 % mass: scalar, [kg], mass of bearing
 
 %% Constants:
-A = 1; % [in]
-B = 2; % [in]
-L = 2; % [in]
-
-A = inch2meter(A); % [in --> m]
-B = inch2meter(B); % [in --> m]
-L = inch2meter(L); % [in --> m]
+A = const.A;
+B = const.B;
+L = const.L;
+density = const.density;
 
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
