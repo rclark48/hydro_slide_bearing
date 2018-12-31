@@ -4,7 +4,7 @@ function [a0, v0] = initialConditions()
 % Written by: Reed Clark
 % Date Created: 12-30-2018
 % Revised By: Reed Clark
-% Revision Description: initial commit
+% Revision Description: typo in outputs block
 
 %% Description:
 % Computes the initial velocity of the bearing from when it's dropped
@@ -20,7 +20,7 @@ function [a0, v0] = initialConditions()
 % system)
 
 % v0: scalar, [m/s], initial velocity of the bearing in the -x_r
-% direction (the direction moving down the ramop in the ramp
+% direction (the direction moving down the ramp in the ramp
 % coordinate system)
 
 %% Constants:
