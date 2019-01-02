@@ -4,8 +4,7 @@ function [pressure,coord] = pressureNodalNetwork(n,height,const,U,solver)
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: converted hi and ho inputs from microns to
-% meters
+% Revision Description: corrected Gauss-Seidel iteration code
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
@@ -127,33 +126,34 @@ switch solver
         err = ones(1,2);
         iter = 0;
         
-        i = 2:m-1;
-        
         j = 1:n;
         jBackward = j(1:end-2);
         jForward = j(3:end);
         jCenter = j(2:end-1);
         
-        outerCoeff = 1/(2*(1 + lambda^2));
-        plusOne = 1 + 3*(h_mn(i,jForward) - h_mn(i,jBackward))./(4*h_mn(i,jCenter));
-        minusOne = 1 - 3*(h_mn(i,jForward) - h_mn(i,jBackward))./(4*h_mn(i,jCenter));
-        mixedCoeff = lambda^2;
-        speedConst = 3*eta*U*dx*(h_mn(i,jForward) - h_mn(i,jBackward))./(h_mn(i,jCenter).^3);
-        
         while all(err(:)) >= const.err.gauss
-            % Since dhdy = 0, this special case of applying
-            % Gauss-Seidel iteration can actually be vectorially
-            % computed.
-            plusOneP = plusOne.*p_mn(i,jForward);
-            minusOneP = minusOne.*p_mn(i,jBackward);
-            mixed = mixedCoeff.*(p_mn(i,jForward) + p_mn(i,jBackward));
-            
-            p_mn(i,jCenter) = outerCoeff.*(plusOneP + minusOneP + mixed - speedConst);
-            
-            err = abs((p_mn - pOld)./p_mn);
-            
-            pOld = p_mn;
-            iter = iter + 1;
+            for i = 2:m-1
+                % Since dhdy = 0, this special case of applying
+                % Gauss-Seidel iteration can actually be vectorially
+                % computed while iterating through the rows in the y
+                % direction.
+                outerCoeff = 1/(2*(1 + lambda^2));
+                plusOne = 1 + 3*(h_mn(i,jForward) - h_mn(i,jBackward))./(4*h_mn(i,jCenter));
+                minusOne = 1 - 3*(h_mn(i,jForward) - h_mn(i,jBackward))./(4*h_mn(i,jCenter));
+                mixedCoeff = lambda^2;
+                speedConst = 3*eta*U*dx*(h_mn(i,jForward) - h_mn(i,jBackward))./(h_mn(i,jCenter).^3);
+                
+                plusOneP = plusOne.*p_mn(i,jForward);
+                minusOneP = minusOne.*p_mn(i,jBackward);
+                mixed = mixedCoeff.*(p_mn(i,jForward) + p_mn(i,jBackward));
+                
+                p_mn(i,jCenter) = outerCoeff.*(plusOneP + minusOneP + mixed - speedConst);
+                
+                err = abs((p_mn - pOld)./p_mn);
+                
+                pOld = p_mn;
+                iter = iter + 1;
+            end
         end
         pressure.dist = p_mn;
     case 'mldivide'
