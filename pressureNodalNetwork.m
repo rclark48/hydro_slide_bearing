@@ -4,7 +4,8 @@ function [pressure,coord] = pressureNodalNetwork(n,height,const,U,solver)
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: added LaTex equation definitions
+% Revision Description: converted hi and ho inputs from microns to
+% meters
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
@@ -47,10 +48,10 @@ function [pressure,coord] = pressureNodalNetwork(n,height,const,U,solver)
 %% Constants:
 B = const.B;
 L = const.L;
-eta = const.eta;
+eta = const.viscosity;
 
-hi = height.hi;
-ho = heigh.ho;
+hi = height.hi *1e-6; % [microns --> m]
+ho = height.ho *1e-6; % [microns --> m]
 
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
