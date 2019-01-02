@@ -4,7 +4,8 @@ function [a0, v0] = initialConditions(const)
 % Written by: Reed Clark
 % Date Created: 12-30-2018
 % Revised By: Reed Clark
-% Revision Description: added const input and redefined the constants
+% Revision Description: added negative signs to outputs to make
+% consistent with sign convention
 
 %% Description:
 % Computes the initial velocity of the bearing from when it's dropped
@@ -39,8 +40,8 @@ z0 = const.z0;
 
 %% Code:
 % a0:
-a0 = g*sind(theta);
+a0 = -g*sind(theta);
 
 % v0:
-v0 = g*sind(theta)*sqrt(2*z0/(g*cosd(theta)));
+v0 = -g*sind(theta)*sqrt(2*z0/(g*cosd(theta)));
 end
