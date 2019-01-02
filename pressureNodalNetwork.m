@@ -4,7 +4,7 @@ function [pressure,coord] = pressureNodalNetwork(n,height,const,U,solver)
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: completed solver in code section
+% Revision Description: added LaTex equation definitions
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
@@ -55,16 +55,47 @@ ho = heigh.ho;
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
 
-% Block equation:
-%% 
-% 
-% $$e^{\pi i} + 1 = 0$$
-% 
+% Reynold's Equation:
+% \frac{\partial }{\partial x} \begin{pmatrix} h^3 \frac{\partial p}{\partial x} \end{pmatrix}  +  \frac{\partial }{\partial y} \begin{pmatrix} h^3 \frac{\partial p}{\partial y} \end{pmatrix} = 6 \eta U \frac{\partial h}{\partial x}
 
-% Inline equation:
-%%
-% $x^2+e^{\pi i}$
+% Simplified Reynold's Equation:
+% \begin{pmatrix} 3 h^2 \frac{\mathrm{d} h}{\mathrm{d} x} \end{pmatrix} + h^3 \frac{\partial^2 p}{\partial x^2} + h^3 \frac{\partial^2 p}{\partial y^2} = 6 \eta U \frac{\mathrm{d} h}{\mathrm{d} x}
 
+% dhdy:
+% \frac{\partial h}{\partial y} = 0
+
+% Lambda:
+% \lambda = \frac{\Delta x}{\Delta y}
+
+% dhdx:
+% \frac{\mathrm{d} h}{\mathrm{d} x} = \frac{h_{m,n+1} - h_{m,n-1}}{2 \Delta x}
+
+% dpdx:
+% \frac{\partial p}{\partial x} = \frac{p_{m+1,n} - p_{m-1,n}}{2 \Delta x}
+
+% dpdy:
+% \frac{\partial p}{\partial y} = \frac{p_{m,n+1} - p_{m,n-1}}{2 \Delta y}
+
+% dp2dx2:
+% \frac{\partial^2 p}{\partial x^2} = \frac{p_{m+1,n} + p_{m-1,n} - 2 p_{m,n}}{\Delta x^2}
+
+% dp2dx2:
+% \frac{\partial^2 p}{\partial y^2} = \frac{p_{m,n+1} + p_{m,n-1} - 2 p_{m,n}}{\Delta y^2}
+
+% Discretized Reynold's Equation:
+% A \begin{pmatrix} p_{m+1,n} - p_{m-1,n} \end{pmatrix} + B \begin{pmatrix} p_{m+1,n} + p_{m-1,n} - p_{m,n} \end{pmatrix} + C \begin{pmatrix} p_{m,n+1} + p_{m,n-1} - p_{m,n} \end{pmatrix} = 6 \eta U \frac{\mathrm{d} h}{\mathrm{d} x}
+
+% A:
+% A = \frac{3 h^2}{2 \Delta x} \frac{\mathrm{d} h}{\mathrm{d} x}
+
+% B:
+% B = \frac{h^3}{\Delta x^2}
+
+% C:
+% C = \frac{h^3}{\Delta y^2}
+
+% Nodal Reynold's Equation (conservation at each interior node):
+% C p_{m,n-1} + (B - A) p_{m-1,n} -2 (B + C) p_{m,n} + (A + B) p_{m+1,n} + C p_{m,n+1} = 6 \eta U \frac{\mathrm{d} h}{\mathrm{d} x}
 %% Code:
 % Grid discretization:
 x = linspace(0,B,n); % vector of x-coordinates
