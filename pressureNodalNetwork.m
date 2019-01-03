@@ -4,7 +4,7 @@ function [pressure,coord] = pressureNodalNetwork(n,height,const,U,solver)
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: corrected Gauss-Seidel iteration code
+% Revision Description: removed tic toc for timing
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
@@ -120,7 +120,6 @@ dhdx = -(hi - ho)./B;
 p_mn = zeros(m,n);
 
 % Solving nodal pressures
-tic
 switch solver
     case 'Gauss-Seidel'
         pOld = p_mn;
@@ -186,5 +185,4 @@ switch solver
         p_k = pressure.sys\rhs_k;
         pressure.dist = reshape(p_k,m,n);       
 end
-toc
 end
