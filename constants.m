@@ -4,7 +4,7 @@ function [const] = constants()
 % Written by: Reed Clark
 % Date Created: 12-30-2018
 % Revised By: Reed Clark
-% Revision Description: added error tolerance for Gauss_Seidel solver
+% Revision Description: changed Gauss-Seidel solder error tolerance
 
 %% Description:
 % This is a modularization function that initializes all constants
@@ -29,7 +29,7 @@ const.z0 = 2e-3; % [m]
 const.density = 7750; %[kg/m^3], mild steel
 const.viscosity = 54.3e-3; %[Pa-s], soybean oil ~75 F
 
-const.err.gauss = 1e-8; % relative error tolerance for Gauss-Seidel pressure solver
+const.err.gauss = eps; % relative error tolerance for Gauss-Seidel pressure solver
 
 %% Equations:
 % There are no formal equations to define in this function.
