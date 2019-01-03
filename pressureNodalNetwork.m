@@ -19,7 +19,7 @@ function [pressure,coord] = pressureNodalNetwork(n,height,const,U,solver)
 % should be diagonally dominant and therefore have a guaranteed
 % convergent solution, but the Gauss-Seidel solver may be neccessary
 % as the resolution (i.e. the number of nodal pressure equations)
-% increases.
+% increases. Mldivide appears to be the faster solver.
 
 %% Inputs:
 % n: scalar, fields define the resolution of the nodal network, i.e.
@@ -120,40 +120,30 @@ dhdx = -(hi - ho)./B;
 p_mn = zeros(m,n);
 
 % Solving nodal pressures
+tic
 switch solver
     case 'Gauss-Seidel'
         pOld = p_mn;
         err = ones(1,2);
-        iter = 0;
+        iter = 1;
         
-        j = 1:n;
-        jBackward = j(1:end-2);
-        jForward = j(3:end);
-        jCenter = j(2:end-1);
-        
-        while all(err(:)) >= const.err.gauss
+        while all(err(:)) > const.err.gauss
             for i = 2:m-1
-                % Since dhdy = 0, this special case of applying
-                % Gauss-Seidel iteration can actually be vectorially
-                % computed while iterating through the rows in the y
-                % direction.
-                outerCoeff = 1/(2*(1 + lambda^2));
-                plusOne = 1 + 3*(h_mn(i,jForward) - h_mn(i,jBackward))./(4*h_mn(i,jCenter));
-                minusOne = 1 - 3*(h_mn(i,jForward) - h_mn(i,jBackward))./(4*h_mn(i,jCenter));
-                mixedCoeff = lambda^2;
-                speedConst = 3*eta*U*dx*(h_mn(i,jForward) - h_mn(i,jBackward))./(h_mn(i,jCenter).^3);
-                
-                plusOneP = plusOne.*p_mn(i,jForward);
-                minusOneP = minusOne.*p_mn(i,jBackward);
-                mixed = mixedCoeff.*(p_mn(i,jForward) + p_mn(i,jBackward));
-                
-                p_mn(i,jCenter) = outerCoeff.*(plusOneP + minusOneP + mixed - speedConst);
-                
-                err = abs((p_mn - pOld)./p_mn);
-                
-                pOld = p_mn;
-                iter = iter + 1;
+                for j = 2:n-1
+                    outerCoeff = 1./(2*(1 + lambda^2));
+                    
+                    up = (1 + 3*(h_mn(i,j+1) - h_mn(i,j-1))./(4*h_mn(i,j)))*p_mn(i,j+1);
+                    down = (1 - 3*(h_mn(i,j+1) - h_mn(i,j-1))./(4*h_mn(i,j)))*p_mn(i,j-1);
+                    leftRight = lambda^2*(p_mn(i+1,j) + p_mn(i-1,j));
+                    speed = 3*eta*U*dx*(h_mn(i,j+1) - h_mn(i,j-1))./(h_mn(i,j)^3);
+                    
+                    p_mn(i,j) = outerCoeff*(up + down + leftRight - speed);
+                end
             end
+            err = abs((p_mn(2:end-1,2:end-1) - pOld(2:end-1,2:end-1))./p_mn(2:end-1,2:end-1));
+            
+            pOld = p_mn;
+            iter = iter + 1;
         end
         pressure.dist = p_mn;
     case 'mldivide'
@@ -196,4 +186,5 @@ switch solver
         p_k = pressure.sys\rhs_k;
         pressure.dist = reshape(p_k,m,n);       
 end
+toc
 end
