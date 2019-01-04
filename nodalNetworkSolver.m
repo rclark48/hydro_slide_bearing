@@ -1,10 +1,10 @@
-function [pressure,coord] = pressureNodalNetwork(n,height,const,U,solver)
+function [pressure,coord] = nodalNetworkSolver(n,height,const,U,solver)
 %% Tittle Block:
 
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: removed tic toc for timing
+% Revision Description: renamed function
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
