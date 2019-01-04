@@ -4,7 +4,7 @@ function [pressure,H] = pressureSolver(U,H,disc,const,solver)
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: renamed function
+% Revision Description: added missing x_mn constant definition
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
@@ -60,6 +60,7 @@ m = disc.m;
 dx = disc.dx;
 dy = disc.dy;
 lambda = disc.lambda;
+x_mn = disc.x_mn;
 
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
