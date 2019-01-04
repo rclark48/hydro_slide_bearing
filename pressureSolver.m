@@ -1,15 +1,10 @@
-function [pressure,H] = nodalNetworkSolver(U,H,disc,const,solver)
+function [pressure,H] = pressureSolver(U,H,disc,const,solver)
 %% Tittle Block:
 
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: separtated discretization into a separate
-% function since the discretization will be set at the outset of the
-% function run, it doesn't need to be recalculated with each new
-% parameter set in it's parent function. Also, changes to mldivide
-% solver code to address errors concerning sparse matrix filling
-% speed.
+% Revision Description: renamed function
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
