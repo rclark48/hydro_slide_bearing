@@ -4,7 +4,8 @@ function [pressure,H] = pressureSolver(U,H,disc,const,solver)
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: added missing x_mn constant definition
+% Revision Description: edited pressure output definition and added H
+% output definitions.
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
@@ -38,15 +39,15 @@ function [pressure,H] = pressureSolver(U,H,disc,const,solver)
 % or both as a sanity check
 
 %% Outputs: 
-% pressure: matrix, [m], nodal pressure distribution. If the
-% mldivide solver is chosen, other fields will be generated within the
-% structure as a means to facilitate that solver.
+% pressure: matrix, [m], nodal pressure distribution.
 
-% disc: structure, [m], nodal coordinates as disctretized by the
-% specified resolutiuon. for code compatness, vectors and matrices
-% will be used during computations while the coord array is just used
-% to compatly pass information relevant to other functions out of the
-% function
+% H.hi: scalar, [microns], inlet height of converging gap
+
+% H.ho: scalar, [microns], outlet height of converging gap
+
+% H.dhdx: scalar, [m/m], slope of converging gap
+
+% H.h_mn: matrix, [m], discretized height distribution
 
 %% Constants:
 B = const.B;
