@@ -1,31 +1,40 @@
-function [pressure,coord] = nodalNetworkSolver(n,height,const,U,solver)
+function [pressure,H] = nodalNetworkSolver(U,H,disc,const,solver)
 %% Tittle Block:
 
 % Written by: Reed Clark
 % Date Created: 12-31-2018
 % Revised By: Reed Clark
-% Revision Description: renamed function
+% Revision Description: separtated discretization into a separate
+% function since the discretization will be set at the outset of the
+% function run, it doesn't need to be recalculated with each new
+% parameter set in it's parent function. Also, changes to mldivide
+% solver code to address errors concerning sparse matrix filling
+% speed.
 
 %% Description:
 % The hydrodynamic pressure is given by the discretized Reynold's
-% Equation in 2 dimensions. This function defines the discretization
-% and solves for the pressure distribution. The function can solve for
-% the nodal pressures in two different ways: one using Gauss-Seidel
-% iteration and another just using mldivide and letting MATLAB decide
-% how to solve the pressure distribution. Regardless of the solution
-% method selected, the function will return the result formatted in
-% the same way. The idea of providing two options is to run some test
-% cases and see which version of the solver runs faster. The system
-% should be diagonally dominant and therefore have a guaranteed
-% convergent solution, but the Gauss-Seidel solver may be neccessary
-% as the resolution (i.e. the number of nodal pressure equations)
-% increases. Mldivide appears to be the faster solver.
+% Equation in 2 dimensions. The function can solve for the nodal
+% pressures in two different ways: one using Gauss-Seidel iteration
+% and another just using mldivide and letting MATLAB decide how to
+% solve the pressure distribution. Regardless of the solution method
+% selected, the function will return the result formatted in the same
+% way. The idea of providing two options is to run some test cases and
+% see which version of the solver runs faster. The system should be
+% diagonally dominant and therefore have a guaranteed convergent
+% solution, but the Gauss-Seidel solver may be neccessary as the
+% resolution (i.e. the number of nodal pressure equations) increases.
+% Mldivide appears to be the faster solver.
 
 %% Inputs:
-% n: scalar, fields define the resolution of the nodal network, i.e.
-% the step size of the discretization
+% U: scalar, [m/s], bearing speed
 
-% height: structure, fields define the inlet height and outlet height
+% H: structure, fields define the inlet height and outlet height
+
+% disc: structure, [m], nodal coordinates as disctretized by the
+% specified resolutiuon. for code compatness, vectors and matrices
+% will be used during computations while the coord array is just used
+% to compatly pass information relevant to other functions out of the
+% function
 
 % const: structure, list of shared constants, controlled by the
 % constants function
@@ -34,23 +43,28 @@ function [pressure,coord] = nodalNetworkSolver(n,height,const,U,solver)
 % or both as a sanity check
 
 %% Outputs: 
-% pressure: structure.dist, [m], nodal pressure distribution. If the
+% pressure: matrix, [m], nodal pressure distribution. If the
 % mldivide solver is chosen, other fields will be generated within the
 % structure as a means to facilitate that solver.
 
-% coord.disc: structure.field, [m], nodal coordinates as disctretized
-% by the specified resolutiuon. for code compatness, vectors and
-% matrices will be used during computations while the coord array is
-% just used to compatly pass information relevant to other functions
-% out of the function
+% disc: structure, [m], nodal coordinates as disctretized by the
+% specified resolutiuon. for code compatness, vectors and matrices
+% will be used during computations while the coord array is just used
+% to compatly pass information relevant to other functions out of the
+% function
 
 %% Constants:
 B = const.B;
-L = const.L;
 eta = const.viscosity;
 
-hi = height.hi *1e-6; % [microns --> m]
-ho = height.ho *1e-6; % [microns --> m]
+hi = H.hi *1e-6; % [microns --> m]
+ho = H.ho *1e-6; % [microns --> m]
+
+n = disc.n;
+m = disc.m;
+dx = disc.dx;
+dy = disc.dy;
+lambda = disc.lambda;
 
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
@@ -97,24 +111,13 @@ ho = height.ho *1e-6; % [microns --> m]
 % Nodal Reynold's Equation (conservation at each interior node):
 % C p_{m,n-1} + (B - A) p_{m-1,n} -2 (B + C) p_{m,n} + (A + B) p_{m+1,n} + C p_{m,n+1} = 6 \eta U \frac{\mathrm{d} h}{\mathrm{d} x}
 %% Code:
-% Grid discretization:
-x = linspace(0,B,n); % vector of x-coordinates
-coord.disc.x = x;
-dx = x(2)-x(1);
-m = round(L/B*n); % number of y-direction discretizations
-y = linspace(0,L,m); % vector of y-coordinates
-coord.disc.y = y;
-dy = y(2)-y(1);
-lambda = dx/dy; % as currently discretized, lambda should = one
-[x_mn, y_mn] = meshgrid(x,y);
-coord.disc.x_mn = x_mn;
-coord.disc.y_mn = y_mn;
-
 % H
 hi_mn = hi.*ones(m,n);
-ho_mn = ho.*ones(m,n);
-h_mn = hi_mn - (hi_mn - ho_mn)./B.*x_mn;
-dhdx = -(hi - ho)./B;
+
+dhdx = -(hi - ho)./B; % scalar, constant everywhere because of linear profile
+h_mn = hi_mn + dhdx.*x_mn;
+    H.dhdx = dhdx;
+    H.h_mn = h_mn;
 
 % Network initialization
 p_mn = zeros(m,n);
@@ -144,7 +147,7 @@ switch solver
             pOld = p_mn;
             iter = iter + 1;
         end
-        pressure.dist = p_mn;
+        pressure = p_mn;
     case 'mldivide'
         i = 1:m; % number of rows
         j = 1:n; % number of columns
@@ -153,36 +156,38 @@ switch solver
         rhs_k = zeros(k,1);
         
         % Spacial pairing of row and column subscripts
-        [coord.sub.i, coord.sub.j] = meshgrid(i,j);
+        [disc.sub.i, disc.sub.j] = meshgrid(i,j);
         
         % Spacial representation of linear indicies of the nodal
         % network, used to set up the system of equations
-        coord.ind = sub2ind([m,n],coord.sub.i,coord.sub.j);
+        disc.ind = sub2ind([m,n],disc.sub.i,disc.sub.j);
         
         % Build coefficient matrix for pressure system
-        pressure.sys = speye(k); % initialize sparse matrix
+        sys = eye(k); % initialize matrix
         for i = 2:m-1
             for j = 2:n-1
-                kLeft = coord.ind(i,j-1);
-                kUp = coord.ind(i-1,j);
-                k = coord.ind(i,j);
-                kDown = coord.ind(i+1,j);
-                kRight = coord.ind(i,j+1);
+                kLeft = disc.ind(i,j-1);
+                kUp = disc.ind(i-1,j);
+                k = disc.ind(i,j);
+                kDown = disc.ind(i+1,j);
+                kRight = disc.ind(i,j+1);
                 
                 A = 3*dhdx*h_mn(k)^2./(2*dx);
                 B = h_mn(k)^3./(dx^2);
                 C = h_mn(k)^3./(dy^2);
                 
-                pressure.sys(k,kLeft) = C;
-                pressure.sys(k,kUp) = B - A;
-                pressure.sys(k,k) = -2*(B + C);
-                pressure.sys(k,kDown) = A + B;
-                pressure.sys(k,kRight) = C;
+                sys(k,kLeft) = C;
+                sys(k,kUp) = B - A;
+                sys(k,k) = -2*(B + C);
+                sys(k,kDown) = A + B;
+                sys(k,kRight) = C;
+                
+                sys = sparse(sys); %convert to sparse for computational efficiency
                 
                 rhs_k(k) = rhs;
             end
         end
-        p_k = pressure.sys\rhs_k;
-        pressure.dist = reshape(p_k,m,n);       
+        p_k = sys\rhs_k;
+        pressure = reshape(p_k,m,n);       
 end
 end
