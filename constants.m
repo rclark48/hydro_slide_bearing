@@ -4,7 +4,8 @@ function [const] = constants()
 % Written by: Reed Clark
 % Date Created: 12-30-2018
 % Revised By: Reed Clark
-% Revision Description: added residual tolerance and time step
+% Revision Description: edited residual tolerance definitions to
+% remove "percent"
 
 %% Description:
 % This is a modularization function that initializes all constants
@@ -30,10 +31,10 @@ const.z0 = 2e-3; % [m]
 const.density = 7750; %[kg/m^3], mild steel
 const.viscosity = 54.3e-3; %[Pa-s], soybean oil ~75 F
 
-% Relative percent error tolerance for Gauss-Seidel pressure solver
+% Relative error tolerance for Gauss-Seidel pressure solver
 const.err.gauss = eps;
 % Residual error tolerance for force and moment balance equations. The
-% residuals are expressed as a normalized approximate percent error
+% residuals are expressed as a normalized approximate error
 % percentage, so the tolerance corresponds to roughly 1/10% error.
 const.err.resid = 1e-3; 
 
