@@ -4,7 +4,7 @@ function [const] = constants()
 % Written by: Reed Clark
 % Date Created: 12-30-2018
 % Revised By: Reed Clark
-% Revision Description: changed Gauss-Seidel solder error tolerance
+% Revision Description: corrected output description
 
 %% Description:
 % This is a modularization function that initializes all constants
@@ -15,7 +15,8 @@ function [const] = constants()
 % There are no explicit inputs to this function
 
 %% Outputs: 
-% const: structure, 
+% const: structure, list of shared constants, controlled by the
+% constants function
 
 %% Constants:
 const.A = inch2meter(1); % [in --> m]
