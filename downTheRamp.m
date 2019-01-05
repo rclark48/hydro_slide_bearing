@@ -4,7 +4,7 @@ function [] = downTheRamp(filename)
 % Written by: Reed Clark
 % Date Created: 1-3-2018
 % Revised By: Reed Clark
-% Revision Description: initial commit
+% Revision Description: removed com function call
 
 %% Description:
 % Given initial conditions, this function solves force and moment
@@ -34,5 +34,4 @@ function [] = downTheRamp(filename)
 % Define equations used throughout code in LaTex for use in publishing.
 
 %% Code:
-[x_cm,z_cm,m] = COM(alpha, beta, const);
 end
