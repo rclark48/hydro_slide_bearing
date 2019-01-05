@@ -2,9 +2,9 @@ function [disc] = discretizer(n,const)
 %% Tittle Block:
 
 % Written by: Reed Clark
-% Date Created: 1-3-2018
+% Date Created: 1-3-2019
 % Revised By: Reed Clark
-% Revision Description: initial commit
+% Revision Description: corrected year in date created
 
 %% Description:
 % This function defines the grid discretization.
