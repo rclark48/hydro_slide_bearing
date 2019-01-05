@@ -2,9 +2,9 @@ function [] = downTheRamp(filename)
 %% Tittle Block:
 
 % Written by: Reed Clark
-% Date Created: 1-3-2018
+% Date Created: 1-3-2019
 % Revised By: Reed Clark
-% Revision Description: removed com function call
+% Revision Description: corrected year in date created
 
 %% Description:
 % Given initial conditions, this function solves force and moment
