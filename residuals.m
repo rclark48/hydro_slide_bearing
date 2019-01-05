@@ -4,10 +4,12 @@ function [res] = residuals(force,moment,com,const)
 % Written by: Reed Clark
 % Date Created: 1-5-2019
 % Revised By: Reed Clark
-% Revision Description: initial commit
+% Revision Description: added function descpirtion and abs() to
+% resudual values
 
 %% Description:
-% Template for uniform functions.
+% This function computes the force and moment balance residuals that
+% must be satisfied by the bearing in operation
 
 %% Inputs:
 % force.loadSupport: scalar, [N], value of hydrodynamic load support
@@ -48,6 +50,6 @@ theta = const.theta;
 % 0 = \int_{0}^{L} \int_{0}^{x_{cm}} p(x,y) x dx dy - \int_{0}^{L} \int_{x_{cm}}^{B} p(x,y) x dx dy - D z_{cm}
 
 %% Code:
-res.forceZ = (F - m*g*cosd(theta))./(m*g*cosd(theta));
-res.momentCM = (M - D*z_cm)./M;
+res.forceZ = abs((F - m*g*cosd(theta))./(m*g*cosd(theta)));
+res.momentCM = abs((M - D*z_cm)./M);
 end
