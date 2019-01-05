@@ -2,9 +2,9 @@ function [data] = initializer(const)
 %% Tittle Block:
 
 % Written by: Reed Clark
-% Date Created: 1-4-2018
+% Date Created: 1-4-2019
 % Revised By: Reed Clark
-% Revision Description: changed length of t vector
+% Revision Description: corrected year in date created
 
 %% Description:
 % This function initializes a structure for metadata storage
