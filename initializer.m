@@ -4,7 +4,7 @@ function [data] = initializer(const)
 % Written by: Reed Clark
 % Date Created: 1-4-2018
 % Revised By: Reed Clark
-% Revision Description: initial commit
+% Revision Description: changed length of t vector
 
 %% Description:
 % This function initializes a structure for metadata storage
@@ -26,7 +26,7 @@ subFields = {'fig' 'plotStyle' 'axes' 'xLabel' 'yLabel' 'valVec'};
 % Define equations used throughout code in LaTex for use in publishing.
 
 %% Code:
-t = 0:dt:10;
+t = 0:dt:30;
 
 for i = 1:length(fields)
     if i == 1
