@@ -4,7 +4,7 @@ function [] = downTheRamp(filename)
 % Written by: Reed Clark
 % Date Created: 1-3-2019
 % Revised By: Reed Clark
-% Revision Description: corrected year in date created
+% Revision Description: added all relevant function calls
 
 %% Description:
 % Given initial conditions, this function solves force and moment
@@ -27,11 +27,24 @@ function [] = downTheRamp(filename)
 % 
 
 %% Constants:
-[const] = constants();
+const = constants();
 
 [a0, v0] = initialConditions(const);
+
+disc = discretizer(25,const);
+
+data = initializer(const);
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
 
 %% Code:
+
+
+[pressure,H] = pressureSolver(U,H,disc,const,solver);
+com = COM(alpha, beta, const);
+[force, moment] = integrator(pressure,U,disc,H,const,com);
+res = residuals(force,moment,com,const);
+
+
+
 end
