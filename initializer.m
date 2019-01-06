@@ -1,10 +1,11 @@
-function [data] = initializer(const)
+function [data] = initializer(const,v0,a0)
 %% Tittle Block:
 
 % Written by: Reed Clark
 % Date Created: 1-4-2019
 % Revised By: Reed Clark
-% Revision Description: corrected year in date created
+% Revision Description: added v0 and a0 inputs for complete
+% initialization
 
 %% Description:
 % This function initializes a structure for metadata storage
@@ -19,8 +20,8 @@ function [data] = initializer(const)
 %% Constants:
 dt = const.dt;
 
-fields = {'time' 'position' 'velocity' 'acceleration' 'alpha' 'beta'};
-subFields = {'fig' 'plotStyle' 'axes' 'xLabel' 'yLabel' 'valVec'};
+fields = {'time' 'position' 'velocity' 'acceleration' 'alpha' 'beta' 'mass' 'hi_and_ho' 'hi_ratio_ho'};
+subFields = {'fig' 'plotStyle' 'axes' 'xLabel' 'yLabel' 'value'};
 
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
@@ -29,23 +30,30 @@ subFields = {'fig' 'plotStyle' 'axes' 'xLabel' 'yLabel' 'valVec'};
 t = 0:dt:30;
 
 for i = 1:length(fields)
-    if i == 1
+    if strcmpi(fields{i}, 'time') % must match fields definition!
         data.(fields{i}) = t;
     else
         for j = 1:length(subfields)
-            switch j
-                case 1
+            switch subFields{j}
+                case 'fig' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = figure('Name',fields{i},'NumberTitle','off');
-                case 2
+                case 'plotStyle' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = '*';
-                case 3
+                case 'axes' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = [0 inf 0 inf];
-                case 4
+                case 'xLabel' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = 'time';
-                case 5
+                case 'yLabel' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = fields{i};
-                case 6
+                case 'value' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = zeros(1,length(t));
+                    if srtcmpi(fields{i}, 'velocity') % must match fields definition!
+                        data.(fields{i}).(subFields{j})(1) = v0;
+                    elseif strcmpi(fields{i}, 'acceleration') % must match fields definition!
+                        data.(fields{i}).(subFields{j})(1) = a0;
+                    elseif strcmpi(fields{i}, 'hi_and_ho') % must match fields definition!
+                        data.(fields{i}).(subFields{j}) = zeros(2,length(t));
+                    end
             end
         end
     end
