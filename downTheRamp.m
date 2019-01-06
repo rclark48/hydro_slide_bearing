@@ -1,10 +1,11 @@
-function [] = downTheRamp(filename)
+function [data] = downTheRamp(filename)
 %% Tittle Block:
 
 % Written by: Reed Clark
 % Date Created: 1-3-2019
 % Revised By: Reed Clark
-% Revision Description: added all relevant function calls
+% Revision Description: added all relevant function calls and started
+% building test algorithm.
 
 %% Description:
 % Given initial conditions, this function solves force and moment
@@ -33,18 +34,32 @@ const = constants();
 
 disc = discretizer(25,const);
 
-data = initializer(const);
+data = initializer(const,v0,a0);
 %% Equations:
 % Define equations used throughout code in LaTex for use in publishing.
 
 %% Code:
+step = 1;
+iter = 1;
 
+% Terminating condition initialization:
+s = data.position.value(1);
+a = 1;
 
-[pressure,H] = pressureSolver(U,H,disc,const,solver);
-com = COM(alpha, beta, const);
-[force, moment] = integrator(pressure,U,disc,H,const,com);
-res = residuals(force,moment,com,const);
+% H initialization:
+ho = 50; % [microns]
+hi = 150; % [microns]
 
+% Removed material initialization:
+alpha = .5; % [inches]
+beta = .25; % [inches]
 
-
+while s >= -inch2meter(24) && a >= const.err.resid
+    [pressure,H] = pressureSolver(U,H,disc,const,solver);
+    com = COM(alpha, beta, const);
+    [force, moment] = integrator(pressure,U,disc,H,const,com);
+    res = residuals(force,moment,com,const);
+    
+    [data, res] = kinematics(step,data,const,force,com,res);
+end
 end
