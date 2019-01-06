@@ -4,8 +4,7 @@ function [data] = initializer(const,v0,a0)
 % Written by: Reed Clark
 % Date Created: 1-4-2019
 % Revised By: Reed Clark
-% Revision Description: added v0 and a0 inputs for complete
-% initialization
+% Revision Description: changed plot style definition
 
 %% Description:
 % This function initializes a structure for metadata storage
@@ -20,7 +19,7 @@ function [data] = initializer(const,v0,a0)
 %% Constants:
 dt = const.dt;
 
-fields = {'time' 'position' 'velocity' 'acceleration' 'alpha' 'beta' 'mass' 'hi_and_ho' 'hi_ratio_ho'};
+fields = {'time' 'position' 'velocity' 'acceleration' 'alpha' 'beta' 'mass' 'x_cm' 'z_cm' 'hi_and_ho' 'hi_ratio_ho'};
 subFields = {'fig' 'plotStyle' 'axes' 'xLabel' 'yLabel' 'value'};
 
 %% Equations:
@@ -38,7 +37,7 @@ for i = 1:length(fields)
                 case 'fig' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = figure('Name',fields{i},'NumberTitle','off');
                 case 'plotStyle' % must match subFields definition!
-                    data.(fields{i}).(subFields{j}) = '*';
+                    data.(fields{i}).(subFields{j}) = '*b';
                 case 'axes' % must match subFields definition!
                     data.(fields{i}).(subFields{j}) = [0 inf 0 inf];
                 case 'xLabel' % must match subFields definition!
